@@ -1,26 +1,39 @@
 import React from 'react';
-import logo from './logo.svg';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
+import CardGrid from './components/card-grid/CardGrid';
+
+import { useDocuments } from './custom-hooks/useDocument';
+import { Document } from './types/files';
+import { useAutoSaveDocuments } from './custom-hooks/useAutoSaveDocuments';
+
 import './App.css';
 
-function App() {
+const App: React.FC = () => {
+  const { documents, setDocuments, loading, error } = useDocuments();
+  const {isSaving } = useAutoSaveDocuments(documents);
+
+  const handleReorder = (updatedDocs: Document[]) => {
+    setDocuments(updatedDocs);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading documents: {error}</div>;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <div style={{ maxWidth: 'fit-content' }}>
+        <CardGrid documents={documents} onReorder={handleReorder} />
+        {isSaving && <div className='auto-save'>Saving...</div>}
+      </div>
+    </DndProvider>
   );
-}
+};
 
 export default App;
