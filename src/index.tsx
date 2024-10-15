@@ -7,9 +7,9 @@ import reportWebVitals from './reportWebVitals';
 import './index.css';
 
 async function enableMocking() {
-  if (process.env.NODE_ENV !== 'development') {
-    return
-  }
+  // if (process.env.NODE_ENV !== 'development') {
+  //   return
+  // }
  
   const { worker } = await import('./mocks/browser')
 
